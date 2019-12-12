@@ -8,3 +8,5 @@ spec:
   containers:
     - name: client
       image: shoyooyo/project4prod
+      ports:
+        - containerPort: 3000
