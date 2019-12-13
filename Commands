@@ -1,0 +1,18 @@
+So what to do once client-pod and client-node-port yaml files are ready
+
+To start MiniKube
+    sudo minikube start
+To check Kubectl cluster status
+    kubectl cluster-info
+Run client-pod file & client-node-port file
+    kubectl apply -f client-pod.yaml
+    kubectl apply -f client-node-port.yaml 
+To Check pod status    
+    kubectl get pods
+To check services status
+    kubectl get services
+To view the ip which needs to be accessed to view application
+    sudo minikube ip
+To view if pods are running with correct information
+    kubectl describe <objectType> <objectName>
+

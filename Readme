@@ -1,0 +1,164 @@
+Kubernetes expects that all the images are pre-built
+We require one config file / object
+We manually need to setup all networking concept
+
+we need to create a separate folder out of the project4 directory and name something, in my case its simplek8s
+
+what is an object?
+    object is a concept of Kubernetes which is used for various purposes
+    from running a container, monitoring a container, setup a netowrk etc
+Object types?
+    Statefulset
+    ReplicaContainer
+    Pod
+    Service
+Hence there kind represents a object type when mentioning in the config file
+difference between service and pod
+ 
+apiVersion: 
+    v1
+    apps/v1
+different apiVersion is used for different object types
+    for example:
+        using v1 gives us access to object types like
+            componentStatus
+            configMap
+            Endpoints
+            Event
+            Namespace
+            Pod
+        using apps/v1 gives us access to object types such as 
+            ControllerRevision
+            Statefulset
+For example, we use a pod for container and hence v1
+
+So whenever running a minicube starts a virtual machine like environment
+which is used by kubernetes and this vm is called as node
+inside this is node is where diff types of objects are started
+
+More about a Pod
+    A pod runs one or more tightly coupled containers
+
+##let's understand the config file
+        apiVersion: v1 - apps/v1
+        kind: <mention object type>
+        metadata:
+        name: client-pod //for naming the pod
+        labels: //tightly coupled with client-node-port.yaml file
+            component: web 
+        spec:
+        containers:
+            - name: client <container name>
+            image: shoyooyo/project4prod <image name from docker hub>
+            ports:
+                - containerPort: 3000 <port that needs to be exposed>
+
+We discussed POD above, let's discuss Service Object type
+
+            apiVersion: v1
+            kind: Service
+            metadata:
+            name: client-node-port
+            spec:
+            type: NodePort
+            ports:
+                - port: 3050
+                targetPort: 3000
+                nodePort: 31515 //ranges 30000-32767
+            selector:
+                component: web
+
+    Services - 4 Subtypes of Services Object type
+        NodePort  - (Exposes a container to outside world) 
+                    (for dev purposes only) 
+                    (not for production except in few cases which will be discussed later)
+                    (reason for not used in PROD is as below
+                        - nodePort is the exposed port for accessibility
+                        - example sas.ciphercloud.in:31515 
+                        - in real world we use only sas.ciphercloud.in
+                        - and using 31515 is not ideal so we don't use nodeport in prod
+        Loadbalancer - 
+        Ingress -
+        ClusterIP -
+
+    Every node created by Kubernetes / Minikube creates a "kube-proxy"
+        Which does routing of requests from the outside world to the Service
+        Where inside the service we have a nodeport running
+
+    Ports is a array and hence any number of different ports can be exposed as per the applications that require
+        port - this parameter is required for inter pod communication
+        targetPort - this is the port on which the traffic is redirected to from the Service Object type
+        NodePort - this is the exposed port to the end user (sas.ciphercloud.in:31515)
+
+    How service object redirects to the respective container in a multi container setup inside a pod
+        that's when we use the Label selector concept in use
+        inside client-pod.yaml we defined a Label
+        inside client-node-port.yaml we defined a selector
+        label selector is a mapping concept which maps the selector to its respective label
+        how it does that ?
+        Service Object will search for all the other objects in a node with the name "web"
+        and since "web" is the name defined for the Pod, it redirects it to that particular pod
+    
+    Now that's the end of understanding the yaml files
+
+By the way, there are two ways to start a Kubernetes
+    Imperative Approach
+        you take control of everything from starting, adding or remove containers
+    Declarative Approach
+        we update the config file and master handles the job for you.
+    example: update the present application running on a container to a new or old copy of its image
+        meaning project4prod can have multiple code changes over a period
+        and if you want the project4prod to be on a specific version (like project4prod:1.4)
+        and imagine 4 out of 10 containers are running 1.4 version whilst others are not
+
+            in imperative Approach
+                you'll need to identify the containers manually
+            in Declarative Approach
+                master handles the job for you
+
+Understanding how kubernetes works in behind
+    deployment file
+        config files
+    master - handles the scaling, deploying, starting nodes and its relevant containers
+        nodes
+            by default we have a docker running inside the minikube node
+            these grab the docker images and start the container
+            this is where different pods & services run
+        kube-apiserver
+            100% responsbile for monitoring nodes Cluster
+
+We have a master in kubernetes and role of master is to start the required Services and maintain them
+
+Running the Kubernetes and accessing application
+    Start minikube
+    Start the pod and node file
+    Access the website using the minikube Ip:nodePort
+To view if pods are running with correct information
+
+
+Important points:
+nodes are individual vm's running containers 
+masters are machines with set of programs for managing Services for kubernetes
+kubernetes doesn't build image 
+master decides where to run containers
+to deploy something, we update desired state in the config file (client-pod / client-node-port)
+master works constantly to achieve desired state 
+    (means if you want 4 copies of containers running all time, then master will take care of that)
+once a pod is created, its port cannot be changed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

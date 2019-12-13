@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
     - name: client
-      image: shoyooyo/project4prod
+      image: stephengrider/multi-client
       ports:
-        - containerPort: 3000
+        - containerPort: 9999
