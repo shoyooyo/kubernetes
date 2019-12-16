@@ -8,12 +8,12 @@ spec:
     matchLabels:
       component: web
   template:
-		metadata:
+    metadata:
       labels:
         component: web
-		spec:
-			containers:
+    spec:
+      containers:
         - name: client
-          image:
-			    ports:
-			      - containerPort: 3000
+          image: shoyooyo/project5client:v1
+          ports:
+            - containerPort: 3000

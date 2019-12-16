@@ -146,6 +146,17 @@ master works constantly to achieve desired state
     (means if you want 4 copies of containers running all time, then master will take care of that)
 once a pod is created, its port cannot be changed
 
+=============================================
+Now's let's talk about Deployment object type
+=============================================
+
+So basically, as stated in the last statement, whenever you try to change a port in the Pod config and apply, you'll see some error's.
+Meaning you can't change certain config parameter's once set
+The only way to do is, delete the pod and make change and start the pod again
+
+So there is a way to go around this and it is also the way that is followed in PROD environment's which is called Deployment Object type
+
+
 
 
 
